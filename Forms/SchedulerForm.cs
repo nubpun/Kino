@@ -20,6 +20,9 @@ namespace Kino.Forms
 
             comboBox1.DataSource = DBController.GetAllHalls();
 
+            dateTimePicker2.Format = DateTimePickerFormat.Custom;
+            dateTimePicker2.CustomFormat = "HH:mm";
+
             comboBox2.DataSource = DBController.GetAllFilms();
 
             var source = new BindingSource();
