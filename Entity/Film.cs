@@ -22,7 +22,7 @@ namespace Kino.Entity
         override
         public string ToString()
         {
-            return title;
+            return title + "(" + lengthInMin + " мин)";
         }
     }
 

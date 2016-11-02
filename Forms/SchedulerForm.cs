@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kino.Entity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,21 +14,41 @@ namespace Kino.Forms
     public partial class SchedulerForm : Form
     {
         protected readonly Form parent;
-        public SchedulerForm(Form p)
+        private void updateTable()
         {
-            InitializeComponent();
-            parent = p;
+            var halls = DBController.GetAllHalls();
+            comboBox1.Items.Clear();
+            foreach (var hall in halls)
+            {
+                comboBox1.Items.Add(hall);
+            }
+            comboBox1.Refresh();
+            var films = DBController.GetAllFilms();
 
-            comboBox1.DataSource = DBController.GetAllHalls();
-
-            dateTimePicker2.Format = DateTimePickerFormat.Custom;
-            dateTimePicker2.CustomFormat = "HH:mm";
-
-            comboBox2.DataSource = DBController.GetAllFilms();
+            comboBox2.Items.Clear();
+            foreach (var film in films)
+            {
+                comboBox2.Items.Add(film);
+            }
+            comboBox2.Refresh();
 
             var source = new BindingSource();
             source.DataSource = DBController.GetSchedulersByDate(dateTimePicker1.Value);
             dataGridView1.DataSource = source;
+
+            dataGridView1.Refresh();
+
+            comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
+        }
+        public SchedulerForm(Form p)
+        {
+            InitializeComponent();
+            parent = p;
+            dateTimePicker2.Format = DateTimePickerFormat.Custom;
+            dateTimePicker2.CustomFormat = "HH:mm";
+
+            updateTable();
         }
 
         private void SchedulerForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -65,9 +86,7 @@ namespace Kino.Forms
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            var source = new BindingSource();
-            source.DataSource = DBController.GetSchedulersByDate(dateTimePicker1.Value);
-            dataGridView1.DataSource = source;
+            updateTable();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -78,6 +97,51 @@ namespace Kino.Forms
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                var date = dateTimePicker1.Value;
+
+                date = date.AddHours(-date.Hour);
+                date = date.AddHours(dateTimePicker2.Value.Hour);
+                date = date.AddMinutes(-date.Minute);
+                date = date.AddMinutes(dateTimePicker2.Value.Minute);
+                var film = ((Film)comboBox2.SelectedItem).id;
+                var cost = Double.Parse(textBox5.Text);
+
+                var hall = ((Hall)comboBox1.SelectedItem).id;
+                
+                DBController.AddSchedule(date, film, cost, hall);
+            }
+            catch (Exception ex)
+            {
+                ExceptionListenerForm.Alert(ex);
+            }
+            updateTable();
+        }
+
+        private void tabPage1_Enter(object sender, EventArgs e)
+        {
+            updateTable();
+        }
+
+        private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            
+        }
+
+        private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            updateTable();
+        }
+
+        private void dataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            var sp = (SchedulePresent)e.Row.DataBoundItem;
+            var id = sp.owner.id;
+            DBController.DelSchedule(id);
         }
     }
 }

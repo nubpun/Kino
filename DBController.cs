@@ -12,6 +12,18 @@ namespace Kino
 {
     static class DBController
     {
+        public static void DelSchedule(int id)
+        {
+            DoStoredProc("DelSchedule", new ParameterStoredProc(SqlDbType.Int, "@schId", id)); 
+        }
+        public static void AddSchedule(DateTime start, int film_id, Double money, int hall_id)
+        {
+            DoStoredProc("AddSchedule",
+                new ParameterStoredProc(SqlDbType.DateTime2, "@start", start),
+                new ParameterStoredProc(SqlDbType.Int, "@film_id", film_id),
+                new ParameterStoredProc(SqlDbType.Decimal, "@Price", money),
+                new ParameterStoredProc(SqlDbType.Int, "@hall_id", hall_id));
+        }
         public static List<FilmsByDate> GetInfoByDate(DateTime start, DateTime end)
         {
             DataTable dataTable = DoStoredProc("GetInfoByDate", new ParameterStoredProc(SqlDbType.DateTime2, "@start", start)
