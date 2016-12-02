@@ -22,13 +22,30 @@ namespace Kino.Forms
         public HallForm(Schedule sch)
         {
             InitializeComponent();
+            TableLayoutRowStyleCollection styles = tableLayoutPanel1.RowStyles;
+
+            foreach (RowStyle style in styles)
+            {
+                style.SizeType = SizeType.Absolute;
+                style.Height = 50;
+            }
+
+            TableLayoutColumnStyleCollection styles2 = tableLayoutPanel1.ColumnStyles;
+
+            foreach (ColumnStyle style in styles2)
+            {
+                style.SizeType = SizeType.Absolute;
+                style.Width = 70;
+            }
+
             List<PlaceInHall> places = DBController.GetAllPlaceInHall(sch.hallId);
             foreach (PlaceInHall place in places)
             {
                 Button button = new Button();
                 button.Height = 50;
                 button.Width = 100;
-                
+                button.Padding = new Padding(0);
+                button.Margin = new Padding(0);
                 button.Click += delegate (object sender, EventArgs e)
                 {
                     DialogResult result = MessageBox.Show("Подтвердите билет:\n " + place.coordX.ToString() + " ряд\n " + place.coordY.ToString() + " место",
@@ -50,6 +67,7 @@ namespace Kino.Forms
                 button.BackColor = Color.Azure;
                 button.Text = "Место " + place.coordX.ToString() + ", " + place.coordY.ToString();                
                 tableLayoutPanel1.Controls.Add(button, place.coordY - 1, place.coordX - 1);
+                
             }
 
             List<Ticket> tickets = DBController.GetAllTicketsBySchedule(sch.id);
@@ -57,12 +75,12 @@ namespace Kino.Forms
             {
                 Button button = (Button)tableLayoutPanel1.GetControlFromPosition(ticket.y - 1, ticket.x - 1);
                 button.BackColor = Color.DarkSalmon;
+                
             }
 
         }        
         private void HallForm_Load(object sender, EventArgs e)
         {
-
         }
     }
 }
