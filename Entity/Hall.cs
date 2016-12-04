@@ -9,18 +9,16 @@ namespace Kino.Entity
     public class Hall
     {
         public readonly int id;
-        public readonly int number;
         public readonly string name;
-        public Hall(int id, int number, string name)
+        public Hall(int id, string name)
         {
             this.id = id;
-            this.number = number;
             this.name = name;
         }
         override
         public string ToString()
         {
-            return "Зал: " + number + " -" +name;
+            return "Зал: " + id + " -" +name;
         }
     }
     

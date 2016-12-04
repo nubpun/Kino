@@ -77,7 +77,6 @@ namespace Kino
             {
                 halls.Add(new Hall(
                     (int)hall["Hall_id"],
-                     (int)hall["HallNumber"],
                     hall["HallName"].ToString()));
             }
             return halls;
